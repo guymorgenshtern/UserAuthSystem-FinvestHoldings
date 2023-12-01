@@ -26,7 +26,7 @@ class PolicyRulesStore:
 
     def add_policy(self, policy: Policy):
         self.policies.append(policy)
-    
+
     def evaluate_all_policies(self, resource, attributes_of_user: dict): 
         for policy in self.policies:
             if policy.evaluate(resource, attributes_of_user):

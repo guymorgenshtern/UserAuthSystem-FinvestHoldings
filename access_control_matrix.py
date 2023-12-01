@@ -1,15 +1,13 @@
-import csv
-
 #implementation of RBAC access control using a matrix 
 class AccessControlMatrix:
     permissions_by_object_subject_matrix = {}
 
     def __init__(self) -> None:
-         self._build_matrix('matrix.csv')
+         self._build_matrix('matrix.txt')
         
     
     def _build_matrix(self, file_name):
-            #open csv representation of matrix
+            #open txt representation of matrix
             with open(file_name, 'r', newline='\n', encoding='utf-8') as file:
                 matrix = file.read()
             print(matrix)
@@ -21,7 +19,7 @@ class AccessControlMatrix:
             print(rows)
     
 
-            #converting csv to nested dictionary: dict[subject][object] = T/F based on permissions defined in csv ('X' = T)        
+            #converting txt to nested dictionary: dict[subject][object] = T/F based on permissions defined in csv ('X' = T)        
             for i in range(len(data)):
                 self.permissions_by_object_subject_matrix[data[i][0]] = {}
                 for j in range(1, len(header) + 1):
@@ -38,6 +36,6 @@ class AccessControlMatrix:
                 s += (f"dict['{first_key}']['{second_key}']: {self.permissions_by_object_subject_matrix[first_key][second_key]}\n")
         
         return s
-    
+
     def check_permission(self, subject, object):
         return self.permissions_by_object_subject_matrix[subject][object]

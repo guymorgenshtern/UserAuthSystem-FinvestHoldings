@@ -71,3 +71,5 @@ print(x.control_matrix.permissions_by_object_subject_matrix[Subjects.Technical_S
 # TS,,,,,,,,,,,,,X
 # T,,,,,,,,,,,,,
 # CO,X,X,,,,,,,,,X,,
+
+    
