@@ -3,9 +3,9 @@ from password_module import PasswordModule
 from enrollment_module import EnrollmentModule
 class LoginModule:
 
-    def __init__(self, storage: SecureStorage) -> None:
+    def __init__(self, storage: SecureStorage, password_module: PasswordModule) -> None:
         self._storage = storage
-        self._password_module = PasswordModule()
+        self._password_module = password_module
     
     def login(self, uid, token):
         

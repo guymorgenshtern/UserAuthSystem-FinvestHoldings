@@ -3,7 +3,7 @@ class AccessControlMatrix:
     permissions_by_object_subject_matrix = {}
 
     def __init__(self) -> None:
-         self._build_matrix('matrix.txt')
+        self._build_matrix('matrix.txt')
         
     
     def _build_matrix(self, file_name):

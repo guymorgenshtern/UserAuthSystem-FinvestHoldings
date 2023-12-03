@@ -4,8 +4,8 @@ from secure_storage import SecureStorage
 import re
 class EnrollmentModule:
 
-    def __init__(self, secure_storage: SecureStorage) -> None:
-        self._password_module = PasswordModule()
+    def __init__(self, secure_storage: SecureStorage, password_module) -> None:
+        self._password_module = password_module
         self._storage = secure_storage
 
     def enroll_user(self, token):
@@ -23,6 +23,10 @@ class EnrollmentModule:
         
         if username == password:
             print("Username and password cannot match")
+            return False
+        
+        if ":" in username:
+            print("Invalid character in username")
             return False
         
         if not self._is_valid_password(password):

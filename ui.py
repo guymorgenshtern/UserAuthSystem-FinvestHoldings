@@ -4,15 +4,34 @@ from enrollment_module import EnrollmentModule
 from login_module import LoginModule
 from secure_storage import SecureStorage
 from access_control_system import AccessControlSystem
+from policy_rules_store import Policy
+from datetime import datetime, time
+from password_module import PasswordModule
 
 class System:
 
     def __init__(self) -> None:
         self.storage = SecureStorage()
-        self.enrollment = EnrollmentModule(self.storage)
-        self.login = LoginModule(self.storage)
+        self.password_module = PasswordModule("passwd.txt")
+        self.enrollment = EnrollmentModule(self.storage, self.password_module)
+        self.login = LoginModule(self.storage, self.password_module)
         self.access_control_system = AccessControlSystem()
+
         self.user = None
+
+        def outside_business_hours():
+            current_time = datetime.now().time()
+
+            # Define the time range (10 am to 4 pm)
+            start_time = time(10, 0)
+            end_time = time(16, 0)
+            return not (current_time >= start_time and current_time <= end_time)
+
+        
+        revoke_teller_balance_access_past_business_hours = Policy(Objects.View_Balance.value,{"role": Subjects.Teller.value}, environmental_condition=outside_business_hours)
+        revoke_teller_portfolio_access_past_business_hours = Policy(Objects.View_Investment_Portfolio.value,{"role": Subjects.Teller.value}, environmental_condition=outside_business_hours)
+        self.access_control_system.policy_store.add_policy(revoke_teller_balance_access_past_business_hours)
+        self.access_control_system.policy_store.add_policy(revoke_teller_portfolio_access_past_business_hours)
     
     def access_resource(self, resource):
         while resource != 'quit':
@@ -101,9 +120,3 @@ class System:
                 print("-----------------------------")       
                 
                 resource = input("What would you like to access (enter 'quit' to logout) \n" + Objects.to_string())
-            
-x = System()
-
-
-
-x.boot()

@@ -3,7 +3,8 @@ from user import User
 
 class PasswordModule:
 
-    _passwd_file = "passwd.txt"
+    def __init__(self, file_name) -> None:
+        self._passwd_file = file_name
 
     def add_pass(self, username, role, password, attributes):
         record_data = self._make_password_record(username=username, role=role, password=password, attributes=attributes)
