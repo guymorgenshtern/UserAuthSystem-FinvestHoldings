@@ -10,20 +10,17 @@ class AccessControlMatrix:
             #open txt representation of matrix
             with open(file_name, 'r', newline='\n', encoding='utf-8') as file:
                 matrix = file.read()
-            print(matrix)
 
             #splitting csv data into header: defines objects, data: defines subjects and permissions
             rows = [row.split(",") for row in matrix.strip().split("\n")]
             header = rows[0][0:]
             data = rows[1:]
-            print(rows)
     
 
             #converting txt to nested dictionary: dict[subject][object] = T/F based on permissions defined in csv ('X' = T)        
             for i in range(len(data)):
                 self.permissions_by_object_subject_matrix[data[i][0]] = {}
                 for j in range(1, len(header) + 1):
-                    print(data[i][0] + " " + header[j - 1]+ " " + str(len(data[i])))
                     self.permissions_by_object_subject_matrix[data[i][0]][header[j - 1]] = True if data[i][j] == "X" else False
         
     def to_string(self) -> str:

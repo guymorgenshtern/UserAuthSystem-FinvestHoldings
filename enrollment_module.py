@@ -1,14 +1,23 @@
 from password_module import PasswordModule
 from subject_enum import Subjects
+from secure_storage import SecureStorage
 import re
 class EnrollmentModule:
 
-    def __init__(self) -> None:
+    def __init__(self, secure_storage: SecureStorage) -> None:
         self._password_module = PasswordModule()
+        self._storage = secure_storage
 
-    def enroll_user(self, username, role, password):
+    def enroll_user(self, token):
 
-        if not self._is_unique_username(self, username):
+        user_info = self._storage.retrieve_secret("new_user", token)
+
+        username = user_info['username']
+        role = user_info['role']
+        password = user_info['password']
+        attributes = user_info["attributes"]
+
+        if not self._is_unique_username(username):
             print("Username " + username + " is unavailable")
             return False
         
@@ -16,7 +25,7 @@ class EnrollmentModule:
             print("Username and password cannot match")
             return False
         
-        if not self._is_valid_password(self, password):
+        if not self._is_valid_password(password):
             print("This password is not strong enough. Please ensure your password meets all these requirement")
             print("- Atleast 8 characters long")
             print("- Contains atleast 1 uppercase letter")
@@ -25,23 +34,18 @@ class EnrollmentModule:
             print("- Not in the format of a license plate, phone number, or date")
             return False
         
-        if not role in Subjects._member_map_:
+        if not Subjects.is_valid_enum_value(role):
             print("Please select a valid role")
             return False
         
-        self._password_module.add_pass(username=username, role=role, password=password)
+        self._password_module.add_pass(username=username, role=role, password=password, attributes=attributes)
+        return True
 
     def _is_unique_username(self, username):
-        with open('password_file.txt', 'r') as file:
-            for line in file:
-                values = line.strip().split(":")
-                if values[0] == username:
-                    return False
-        
-        return True
+        return not self._password_module.is_user(username)
     
 
-    def _is_valid_password(password):    
+    def _is_valid_password(self, password):    
         # Check length
         if not 8 <= len(password):
             return False
@@ -67,6 +71,9 @@ class EnrollmentModule:
         re.search(r'\b\d{1,3}[A-Za-z]\d{1,4}\b', password) or \
         re.search(r'\b\d{3}[./-]\d{3}[./-]\d{4}\b', password):
             return False
+        
+        if not self._proactive_pass_check(password):
+            return False
 
         return True
     
@@ -77,40 +84,3 @@ class EnrollmentModule:
                     return False
         
         return True
-    
-
-import secrets
-
-class PasswordManager:
-    def __init__(self):
-        self._temporary_storage = {}
-
-    def store_password(self, user_id, password):
-        # Use secrets.token_hex to generate a secure token
-        secure_token = secrets.token_hex(16)
-        self._temporary_storage[user_id] = (password, secure_token)
-
-    def retrieve_password(self, user_id, entered_token):
-        # Check if the user_id exists in the temporary storage
-        if user_id in self._temporary_storage:
-            stored_password, secure_token = self._temporary_storage[user_id]
-
-            # Check if the entered token matches the stored secure token
-            if secure_token == entered_token:
-                return stored_password
-
-        return None
-
-# Example usage
-password_manager = PasswordManager()
-
-# Storing a password securely
-user_id = "user123"
-password_to_store = "my_secure_password"
-password_manager.store_password(user_id, password_to_store)
-
-# Retrieving the password securely (simulating a user entering a secure token)
-entered_secure_token = password_manager._temporary_storage[user_id][1]
-retrieved_password = password_manager.retrieve_password(user_id, entered_secure_token)
-
-print(f"Retrieved Password: {retrieved_password}")

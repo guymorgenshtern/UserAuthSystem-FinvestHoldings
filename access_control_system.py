@@ -28,37 +28,32 @@ class AccessControlSystem:
         # in this system, the access control matrix is responsible for determining who has access to the system
         # the policy store handles special conditions (i.e Tellers can't access system past business hours)
         # if the policy store evaluates TRUE on a subject-object pair, then access is DENIED, otherwise the matrix is consulted
-
-        if self.policy_store.evaluate_all_policies(object, subject):
+   
+        if self.policy_store.evaluate_all_policies(object, subject.attributes):
             return False
         else:
-            return self.control_matrix.check_permission(subject['role'], object)
+            return self.control_matrix.check_permission(subject.role, object)
     
 
 
-x = AccessControlSystem()
+# x = AccessControlSystem()
 
-first_dimension_keys = list(x.control_matrix.permissions_by_object_subject_matrix.keys())
-second_dimension_keys = list(x.control_matrix.permissions_by_object_subject_matrix[first_dimension_keys[0]].keys())
+# first_dimension_keys = list(x.control_matrix.permissions_by_object_subject_matrix.keys())
+# second_dimension_keys = list(x.control_matrix.permissions_by_object_subject_matrix[first_dimension_keys[0]].keys())
 
-p = ""
-for obj in second_dimension_keys:
-    p += obj + ","
-print(p)
 
-for first_key in first_dimension_keys:
-    s = first_key + ","
-    for second_key in second_dimension_keys:
-        if x.check_authorization({'role': first_key}, second_key):
-             s += "X"
-        else:
-            s += "-"
-        s+= ","
-    print(s)
+# for first_key in first_dimension_keys:
+#     s = first_key + ","
+#     for second_key in second_dimension_keys:
+#         if x.check_authorization({'role': first_key}, second_key):
+#              s += "X"
+#         else:
+#             s += "-"
+#         s+= ","
+#     print(s)
     
         
 
-print(x.control_matrix.permissions_by_object_subject_matrix[Subjects.Technical_Support.value][Objects.View_Client_Info.value])
 
 
 # VB,VIP,MIP,GCOFA,GCOFP,GCOIA,VMMI,VPCI,VII,VDT,VIPM,VCI,RCAA,

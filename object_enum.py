@@ -14,3 +14,14 @@ class Objects(Enum):
     Validate_Investment_Portfolio_Modifications = 'VIPM'
     View_Client_Info = 'VCI'
     Request_Client_Account_Access = 'RCAA'
+
+    def is_valid_enum_value(input_str):
+        # Check if the input_str is a value in the Objects enum
+        return any(input_str == obj.value for obj in Objects)
+    
+    def to_string():
+        s = ""
+        for obj in Objects:
+            s +=(f"{obj.name} ({obj.value})\n")
+
+        return s
